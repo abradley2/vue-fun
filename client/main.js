@@ -1,19 +1,23 @@
 const Vue = require('vue')
+const Vuex = require('vuex')
 const xhr = require('xhr')
+const _ = require('lodash')
 
-const home = require('./views/home.vue')
+Vue.use(Vuex)
 
-const routes = {
-  '/': home
-}
+const routes = {}
+const stores = {modules: {}}
+
+init('home', ['/', require('./views/home.vue')])
 
 document.addEventListener('DOMContentLoaded', function () {
   const el = document.createElement('div')
   el.id = 'app'
   document.body.appendChild(el)
 
-  ;(new Vue({
+  new Vue({
     el: '#app',
+    store: new Vuex.Store(stores),
     data: {
       currentRoute: window.location.pathname
     },
@@ -25,8 +29,21 @@ document.addEventListener('DOMContentLoaded', function () {
     render: function (h) {
       return h(this.ViewComponent)
     }
-  })())
+  })
 })
+
+function init (namespace, args) {
+  const mod = args[args.length - 1]
+  const view = _.omit(mod, 'store')
+  const store = mod.store
+  args.forEach(function (arg, idx) {
+    if (idx !== args.length - 1) {
+      routes[arg] = view
+    }
+  })
+  store.namespaced = true
+  stores.modules[namespace] = store
+}
 
 ;['post', 'put', 'patch', 'head', 'del', 'get'].forEach(function (method) {
   xhr[method] = (function (send) {

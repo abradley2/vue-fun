@@ -5,18 +5,22 @@
 </style>
 
 <template>
-  <h1 class="red">{{msg}}</h1>
+  <div>
+    <h1 class="red">{{msg}}</h1>
+    <button>Do Something</button>
+  </div>
 </template>
 
 <script>
-module.exports = {
-  methods: {
+exports.store = {
+  state: {
+    message: 'Hello World'
+  }
+}
 
-  },
-  data: function () {
-    return {
-      msg: 'Hello World!'
-    }
+exports.data = function () {
+  return {
+    msg: 'Hello World!'
   }
 }
 </script>
