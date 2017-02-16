@@ -6,6 +6,13 @@ const _ = require('lodash')
 
 const routes = []
 const stores = {}
+const computed = {
+  testComputed: function () {
+    return 'sup'
+  }
+}
+
+stores.computed = computed
 
 Vue.use(Router)
 Vue.use(Vuex)
@@ -16,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
   const store = new Vuex.Store(stores)
 
-  console.log('storeConfig = ', JSON.stringify(stores, null, 3))
   createVue({
     router,
     store
@@ -45,7 +51,15 @@ function initRoute (path, component) {
 // initialize the store of a module
 function initStore (namespace, store) {
   if (!stores.modules) stores.modules = {}
+  if (!stores.computed) stores.getters = {}
+  const getter = {
+    [namespace]: function (state) {
+      return state[namespace]
+    }
+  }
+  console.log(getter)
   stores.modules[namespace] = _.set(store, 'namespaced', true)
+  _.assign(stores.getters, getter)
 }
 
 // wrap the xhr library used to hit the dev server when on local

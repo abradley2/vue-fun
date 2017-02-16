@@ -6,7 +6,7 @@
 
 <template>
   <div>
-    <h1 class="red">{{$store.state.home.message}}</h1>
+    <h1 class="red">{{testComputed}}</h1>
     <button v-on:click="editMessage">Do Something</button>
   </div>
 </template>
