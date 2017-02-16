@@ -6,8 +6,8 @@
 
 <template>
   <div>
-    <h1 class="red">{{testComputed}}</h1>
-    <button v-on:click="editMessage">Do Something</button>
+    <h1 class='red'>{{state.message}}</h1>
+    <input type='text' v-on:input='editMessage' />
   </div>
 </template>
 
@@ -24,9 +24,8 @@ exports.store = {
 }
 
 exports.methods = {
-  editMessage: function () {
-    console.log(this.$store.state.home)
-    this.$store.commit('home/setMessage', 'button clicked!')
+  editMessage: function (e) {
+    this.$store.commit('home/setMessage', e.target.value)
   }
 }
 </script>

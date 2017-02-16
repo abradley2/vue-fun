@@ -6,13 +6,6 @@ const _ = require('lodash')
 
 const routes = []
 const stores = {}
-const computed = {
-  testComputed: function () {
-    return 'sup'
-  }
-}
-
-stores.computed = computed
 
 Vue.use(Router)
 Vue.use(Vuex)
@@ -22,7 +15,6 @@ init('home', ['/', '/home'], require('./modules/home.vue'))
 document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
   const store = new Vuex.Store(stores)
-
   createVue({
     router,
     store
@@ -36,8 +28,8 @@ function createVue (config) {
 
 // function to init a module and have it's routes/stores/component added to the app
 function init (namespace, paths, config) {
-  const component = _.omit(config, ['store'])
   const store = config.store
+  const component = initComponent(namespace, config)
   initRoute(paths, component)
   if (store) initStore(namespace, store)
 }
@@ -48,18 +40,20 @@ function initRoute (path, component) {
   routes.push({path, component})
 }
 
+function initComponent (namespace, config) {
+  config.data = function () {
+    return {
+      state: this.$store.state[namespace]
+    }
+  }
+  return _.omit(config, ['store'])
+}
+
 // initialize the store of a module
 function initStore (namespace, store) {
   if (!stores.modules) stores.modules = {}
-  if (!stores.computed) stores.getters = {}
-  const getter = {
-    [namespace]: function (state) {
-      return state[namespace]
-    }
-  }
-  console.log(getter)
+  if (!stores.getters) stores.getters = {}
   stores.modules[namespace] = _.set(store, 'namespaced', true)
-  _.assign(stores.getters, getter)
 }
 
 // wrap the xhr library used to hit the dev server when on local
