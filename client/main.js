@@ -1,50 +1,54 @@
-const Vue = require('vue')
+const Vue = require('vue/dist/vue.common.js')
 const Vuex = require('vuex')
+const Router = require('vue-router')
 const xhr = require('xhr')
 const _ = require('lodash')
 
+const routes = []
+const stores = {}
+
+Vue.use(Router)
 Vue.use(Vuex)
 
-const routes = {}
-const stores = {modules: {}}
-
-init('home', ['/', require('./views/home.vue')])
+init('home', ['/', '/home'], require('./modules/home.vue'))
 
 document.addEventListener('DOMContentLoaded', function () {
-  const el = document.createElement('div')
-  el.id = 'app'
-  document.body.appendChild(el)
+  const router = new Router({routes})
+  const store = new Vuex.Store(stores)
 
-  new Vue({
-    el: '#app',
-    store: new Vuex.Store(stores),
-    data: {
-      currentRoute: window.location.pathname
-    },
-    computed: {
-      ViewComponent: function () {
-        return routes[this.currentRoute]
-      }
-    },
-    render: function (h) {
-      return h(this.ViewComponent)
-    }
-  })
+  console.log('storeConfig = ', JSON.stringify(stores, null, 3))
+  createVue({
+    router,
+    store
+  }).$mount('#app')
 })
 
-function init (namespace, args) {
-  const mod = args[args.length - 1]
-  const view = _.omit(mod, 'store')
-  const store = mod.store
-  args.forEach(function (arg, idx) {
-    if (idx !== args.length - 1) {
-      routes[arg] = view
-    }
-  })
-  store.namespaced = true
-  stores.modules[namespace] = store
+// convenience function because "new" for side-effects is gross
+function createVue (config) {
+  return new Vue(config)
 }
 
+// function to init a module and have it's routes/stores/component added to the app
+function init (namespace, paths, config) {
+  const component = _.omit(config, ['store'])
+  const store = config.store
+  initRoute(paths, component)
+  if (store) initStore(namespace, store)
+}
+
+// initialize the route of a module
+function initRoute (path, component) {
+  if (Array.isArray(path)) return path.map(_.partial(initRoute, _, component))
+  routes.push({path, component})
+}
+
+// initialize the store of a module
+function initStore (namespace, store) {
+  if (!stores.modules) stores.modules = {}
+  stores.modules[namespace] = _.set(store, 'namespaced', true)
+}
+
+// wrap the xhr library used to hit the dev server when on local
 ;['post', 'put', 'patch', 'head', 'del', 'get'].forEach(function (method) {
   xhr[method] = (function (send) {
     return function (config, cb) {
