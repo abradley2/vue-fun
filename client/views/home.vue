@@ -10,7 +10,9 @@
     <input type='text' v-on:input='editNewTodo' v-bind:value='state.newTodo'/>
     <ul v-for='todo in state.todos'>
       <li>
-        <button><i class='fa fa-2x fa-remove'></i></button>
+        <button v-on:click='removeTodo(todo.id)'>
+          <i class='fa fa-2x fa-remove'></i>
+        </button>
         <span>{{todo.title}}</span>
       </li>
     </ul>
@@ -30,6 +32,11 @@ exports.store = {
     editNewTodo: function (state, title) {
       state.newTodo = title
     },
+    removeTodo: function (state, todoId) {
+      state.todos = state.todos.filter(function (todo) {
+        return todo.id !== todoId
+      })
+    },
     addTodo: function (state, title) {
       state.newTodo = ''
       state.todos.push({
@@ -47,6 +54,9 @@ exports.methods = {
   },
   editNewTodo: function (e) {
     this.$store.commit('home/editNewTodo', e.target.value)
+  },
+  removeTodo: function (id) {
+    this.$store.commit('home/removeTodo', id)
   }
 }
 </script>
