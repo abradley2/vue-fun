@@ -10,7 +10,7 @@ const stores = {}
 Vue.use(Router)
 Vue.use(Vuex)
 
-init('home', ['/', '/home'], require('./modules/home.vue'))
+init('home', ['/', '/home'], require('./views/home.vue'))
 
 document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
@@ -29,8 +29,8 @@ function createVue (config) {
 // function to init a module and have it's routes/stores/component added to the app
 function init (namespace, paths, config) {
   const store = config.store
-  const component = initComponent(namespace, config)
-  initRoute(paths, component)
+  const view = initView(namespace, config)
+  initRoute(paths, view)
   if (store) initStore(namespace, store)
 }
 
@@ -40,7 +40,7 @@ function initRoute (path, component) {
   routes.push({path, component})
 }
 
-function initComponent (namespace, config) {
+function initView (namespace, config) {
   config.data = function () {
     return {
       state: this.$store.state[namespace]
