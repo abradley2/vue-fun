@@ -3,6 +3,7 @@ const Vuex = require('vuex')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const _ = require('lodash')
+const vueGit = require('./vue-git')
 
 const routes = []
 const stores = {}
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
   const store = new Vuex.Store(stores)
   createVue({
+    plugins: [vueGit],
     router,
     store
   }).$mount('#app')
