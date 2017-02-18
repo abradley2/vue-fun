@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start-dev": "NODE_ENV=development concurrently \"node server\" \"budo client/main.js:main.bundle.js --live --dir public\"",
-    "start-prod": "NODE_ENV=production browserify client/main.js | uglifyjs -c > ./public/main.bundle.js && node server"
+    "start-prod": "NODE_ENV=production browserify client/main.js -g uglifyify -o ./public/main.bundle.js && node server"
   },
   "browserify": {
     "transform": [
@@ -47,6 +47,7 @@
     "postcss-cssnext": "^2.9.0",
     "standard": "^8.6.0",
     "tape": "^4.6.3",
+    "uglifyify": "^3.0.4",
     "vueify": "^9.4.0"
   }
 }
