@@ -5,7 +5,11 @@ const xhr = require('xhr')
 const _ = require('lodash')
 
 const routes = []
-const stores = {}
+const stores = {
+  state: {
+    app: 'StarterApp'
+  }
+}
 
 Vue.use(Router)
 Vue.use(Vuex)
@@ -16,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
   const store = new Vuex.Store(stores)
 
-	console.log(stores)
+  console.log(stores)
 
   createVue({
     router,
@@ -44,11 +48,11 @@ function initRoute (path, component) {
 }
 
 function initView (namespace, config) {
-  config.data = function () {
-    return {
-      state: this.$store.state[namespace]
+  config.computed = _.assign(config.computed || {}, {
+    state: function () {
+      return this.$store.state[namespace]
     }
-  }
+  })
   return _.omit(config, ['store'])
 }
 
