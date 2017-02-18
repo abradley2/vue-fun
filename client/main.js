@@ -3,7 +3,6 @@ const Vuex = require('vuex')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const _ = require('lodash')
-const diff = require('./diffs')
 
 const routes = []
 const stores = {}
@@ -15,9 +14,10 @@ init('home', ['/', '/home'], require('./views/home.vue'))
 
 document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
-  const store = new Vuex.Store(
-    _.assign(stores, {plugins: [diff]})
-  )
+  const store = new Vuex.Store(stores)
+
+	console.log(stores)
+
   createVue({
     router,
     store
@@ -55,7 +55,6 @@ function initView (namespace, config) {
 // initialize the store of a module
 function initStore (namespace, store) {
   if (!stores.modules) stores.modules = {}
-  if (!stores.getters) stores.getters = {}
   stores.modules[namespace] = _.set(store, 'namespaced', true)
 }
 
