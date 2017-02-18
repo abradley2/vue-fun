@@ -6,6 +6,10 @@
 
 <template>
   <div class='center measure-wide'>
+    <input type='text'
+      v-on:keyup.left='$store.commit("_prevPatch")'
+      v-on:keyup.right='$store.commit("_nextPatch")'
+    />
     <button v-on:click='addTodo'>Add Todo</button>
     <input type='text' v-on:input='editNewTodo' v-bind:value='state.newTodo'/>
     <ul v-for='todo in state.todos'>
