@@ -35,7 +35,6 @@ function diff (store) {
       prev: jiff.diff(newState, prevState)
     })
     prevState = newState
-    console.log('patches,', patches)
   })
 }
 
