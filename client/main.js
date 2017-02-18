@@ -3,6 +3,7 @@ const Vuex = require('vuex')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const _ = require('lodash')
+const diff = require('./diffs')
 
 const routes = []
 const stores = {}
@@ -14,7 +15,9 @@ init('home', ['/', '/home'], require('./views/home.vue'))
 
 document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
-  const store = new Vuex.Store(stores)
+  const store = new Vuex.Store(
+    _.assign(stores, {plugins: [diff]})
+  )
   createVue({
     router,
     store
