@@ -20,18 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const router = new Router({routes})
   const store = new Vuex.Store(stores)
 
-  console.log(stores)
-
-  createVue({
+  return new Vue({
     router,
     store
   }).$mount('#app')
 })
-
-// convenience function because "new" for side-effects is gross
-function createVue (config) {
-  return new Vue(config)
-}
 
 // function to init a module and have it's routes/stores/component added to the app
 function init (namespace, paths, config) {
@@ -47,6 +40,7 @@ function initRoute (path, component) {
   routes.push({path, component})
 }
 
+// for convenience, give every vue a computed that has access to it's store
 function initView (namespace, config) {
   config.computed = _.assign(config.computed || {}, {
     state: function () {
@@ -56,23 +50,23 @@ function initView (namespace, config) {
   return _.omit(config, ['store'])
 }
 
-// initialize the store of a module
+// for convenience, add the 'store' property of every vue as a module in the main store
 function initStore (namespace, store) {
   if (!stores.modules) stores.modules = {}
   stores.modules[namespace] = _.set(store, 'namespaced', true)
 }
 
 // wrap the xhr library used to hit the dev server when on local
-;['post', 'put', 'patch', 'head', 'del', 'get'].forEach(function (method) {
-  xhr[method] = (function (send) {
-    return function (config, cb) {
-      if (
-        process.env.NODE_ENV === 'development' &&
-        config.url[0] === '/'
-      ) {
-        config.url = `http://localhost:3000${config.url}`
-      }
-      return send(config, cb)
+const methods = ['post', 'put', 'patch', 'head', 'del', 'get']
+
+methods.forEach(function (method) {
+  xhr[method] = _.wrap(xhr[method], function (func, config, cb) {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      config.url[0] === '/'
+    ) {
+      config.url = `http://localhost:3000${config.url}`
     }
-  })(xhr[method])
+    return func(config, cb)
+  })
 })

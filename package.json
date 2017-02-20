@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": {},
-  "test": "standard",
   "license": "MIT",
   "scripts": {
     "start-dev": "NODE_ENV=development concurrently \"node server\" \"budo client/main.js:main.bundle.js --live --dir public\"",
-    "start-prod": "NODE_ENV=production browserify client/main.js -g uglifyify -o ./public/main.bundle.js && node server"
+    "start-prod": "NODE_ENV=production browserify client/main.js -g uglifyify -o ./public/main.bundle.js && node server",
+    "test": "standard"
   },
   "browserify": {
     "transform": [
