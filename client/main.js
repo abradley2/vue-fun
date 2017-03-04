@@ -1,8 +1,7 @@
-const Vue = require('vue/dist/vue.common.js')
+const Vue = require('vue')
 const Vuex = require('vuex')
 const Router = require('vue-router')
 const xhr = require('xhr')
-const _ = require('lodash')
 
 const routes = []
 const stores = {
@@ -16,15 +15,13 @@ Vue.use(Vuex)
 
 init('home', ['/', '/home'], require('./views/home.vue'))
 
-document.addEventListener('DOMContentLoaded', function () {
-  const router = new Router({routes})
-  const store = new Vuex.Store(stores)
+const router = new Router({routes})
+const store = new Vuex.Store(stores)
 
-  return new Vue({
-    router,
-    store
-  }).$mount('#app')
-})
+new Vue({
+  router,
+  store
+}).$mount('#app')
 
 // function to init a module and have it's routes/stores/component added to the app
 function init (namespace, paths, config) {
@@ -36,37 +33,43 @@ function init (namespace, paths, config) {
 
 // initialize the route of a module
 function initRoute (path, component) {
-  if (Array.isArray(path)) return path.map(_.partial(initRoute, _, component))
+  if (Array.isArray(path)) {
+    return path.map(function (p) {
+      return initRoute(p, component)
+    })
+  }
   routes.push({path, component})
 }
 
 // for convenience, give every vue a computed that has access to it's store
 function initView (namespace, config) {
-  config.computed = _.assign(config.computed || {}, {
+  config.computed = Object.assign(config.computed || {}, {
     state: function () {
       return this.$store.state[namespace]
     }
   })
-  return _.omit(config, ['store'])
+  return config
 }
 
 // for convenience, add the 'store' property of every vue as a module in the main store
 function initStore (namespace, store) {
   if (!stores.modules) stores.modules = {}
-  stores.modules[namespace] = _.set(store, 'namespaced', true)
+  store.namespaced = true
+  stores.modules[namespace] = store
 }
 
-// wrap the xhr library used to hit the dev server when on local
-const methods = ['post', 'put', 'patch', 'head', 'del', 'get']
+if (process.env.NODE_ENV === 'development') {
+  // wrap the xhr library used to hit the dev server when on local
+  const methods = ['post', 'put', 'patch', 'head', 'del', 'get']
 
-methods.forEach(function (method) {
-  xhr[method] = _.wrap(xhr[method], function (func, config, cb) {
-    if (
-      process.env.NODE_ENV === 'development' &&
-      config.url[0] === '/'
-    ) {
-      config.url = `http://localhost:3000${config.url}`
-    }
-    return func(config, cb)
+  methods.forEach(function (method) {
+    xhr[method] = (function (func) {
+      return function (config, cb) {
+        if (config.url[0] === '/') {
+          config.url = `http://localhost:3000${config.url}`
+        }
+        return func(config, cb)
+      }
+    }(xhr[method]))
   })
-})
+}

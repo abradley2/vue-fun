@@ -5,7 +5,7 @@
   "repository": {},
   "license": "MIT",
   "scripts": {
-    "start-dev": "NODE_ENV=development concurrently \"node server\" \"budo client/main.js:main.bundle.js --live --dir public\"",
+    "start-dev": "NODE_ENV=development concurrently \"nodemon --watch ./api ./server\" \"budo client/main.js:main.bundle.js --live --dir public\"",
     "start-prod": "NODE_ENV=production browserify client/main.js -g uglifyify -o ./public/main.bundle.js && node server",
     "test": "standard"
   },
@@ -37,18 +37,21 @@
   "devDependencies": {
     "autoprefixer": "^6.7.2",
     "babel": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.22.0",
+    "babel-runtime": "^6.23.0",
     "babelify": "^7.3.0",
     "browserify": "^14.0.0",
     "budo": "^9.4.7",
     "concurrently": "^3.3.0",
     "envify": "^4.0.0",
+    "eslint-plugin-html": "^2.0.1",
     "postcss": "^5.2.12",
     "postcss-cssnext": "^2.9.0",
     "standard": "^8.6.0",
     "tape": "^4.6.3",
-    "uglifyjs": "^2.4.10",
     "uglifyify": "^3.0.4",
+    "uglifyjs": "^2.4.10",
     "vueify": "^9.4.0"
   }
 }

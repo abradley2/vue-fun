@@ -29,7 +29,7 @@ exports.store = {
     todos: []
   },
   mutations: {
-    editNewTodo: function (state, title) {
+    editNewTodo: function(state, title) {
       state.newTodo = title
     },
     removeTodo: function (state, todoId) {
