@@ -17,12 +17,12 @@ Vue.use(Vuex)
 
 init('home', ['/', '/home'], require('./views/home.vue'))
 
-const router = new Router({routes: routes})
+const router = new Router({routes})
 const store = new Vuex.Store(stores)
 
 new Vue({
-  router: router,
-  store: store,
+  router,
+  store,
   render: function (createElement) {
     return createElement(app)
   }
@@ -43,7 +43,7 @@ function initRoute (path, component) {
       return initRoute(p, component)
     })
   }
-  routes.push({path: path, component: component})
+  routes.push({path, component})
 }
 
 // for convenience, give every vue a computed that has access to it's store
@@ -76,7 +76,7 @@ if (process.env.NODE_ENV === 'development') {
     xhr[method] = (function (func) {
       return function (config, cb) {
         if (config.url[0] === '/') {
-          config.url = "http://localhost:3000" + config.url
+          config.url = `http://localhost:3000${config.url}`
         }
         return func(config, cb)
       }
