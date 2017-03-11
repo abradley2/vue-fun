@@ -17,10 +17,14 @@ init('home', ['/', '/home'], require('./views/home.vue'))
 
 const router = new Router({routes})
 const store = new Vuex.Store(stores)
+const App = require('./app.vue')
 
 new Vue({
   router,
-  store
+  store,
+  render: function (createElement) {
+    return createElement(App)
+  }
 }).$mount('#app')
 
 // function to init a module and have it's routes/stores/component added to the app

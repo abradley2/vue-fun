@@ -12,14 +12,7 @@
   "browserify": {
     "transform": [
       "vueify",
-      "envify",
-      "babelify"
-    ]
-  },
-  "vueify": {
-    "postcss": [
-      "postcss-cssnext",
-      "autoprefixer"
+      "envify"
     ]
   },
   "dependencies": {
@@ -36,22 +29,14 @@
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
-    "babel": "^6.23.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.22.0",
-    "babel-runtime": "^6.23.0",
-    "babelify": "^7.3.0",
     "browserify": "^14.0.0",
     "budo": "^9.4.7",
     "concurrently": "^3.3.0",
     "envify": "^4.0.0",
-    "eslint-plugin-html": "^2.0.1",
-    "postcss": "^5.2.12",
-    "postcss-cssnext": "^2.9.0",
+    "nodemon": "^1.11.0",
     "standard": "^8.6.0",
     "tape": "^4.6.3",
     "uglifyify": "^3.0.4",
-    "uglifyjs": "^2.4.10",
     "vueify": "^9.4.0"
   }
 }
