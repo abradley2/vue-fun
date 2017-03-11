@@ -2,12 +2,14 @@ const Vue = require('vue')
 const Vuex = require('vuex')
 const Router = require('vue-router')
 const xhr = require('xhr')
+const app = require('./app.vue')
 
 const routes = []
 const stores = {
   state: {
     app: 'StarterApp'
-  }
+  },
+  modules: {}
 }
 
 Vue.use(Router)
@@ -15,15 +17,14 @@ Vue.use(Vuex)
 
 init('home', ['/', '/home'], require('./views/home.vue'))
 
-const router = new Router({routes})
+const router = new Router({routes: routes})
 const store = new Vuex.Store(stores)
-const App = require('./app.vue')
 
 new Vue({
-  router,
-  store,
+  router: router,
+  store: store,
   render: function (createElement) {
-    return createElement(App)
+    return createElement(app)
   }
 }).$mount('#app')
 
@@ -42,24 +43,29 @@ function initRoute (path, component) {
       return initRoute(p, component)
     })
   }
-  routes.push({path, component})
+  routes.push({path: path, component: component})
 }
 
 // for convenience, give every vue a computed that has access to it's store
 function initView (namespace, config) {
-  config.computed = Object.assign(config.computed || {}, {
-    state: function () {
-      return this.$store.state[namespace]
-    }
-  })
-  return config
+  config.computed = config.computed || {}
+  config.computed.state = function () {
+    return this.$store.state[namespace]
+  }
+  return omit(config, 'store')
 }
 
 // for convenience, add the 'store' property of every vue as a module in the main store
 function initStore (namespace, store) {
-  if (!stores.modules) stores.modules = {}
   store.namespaced = true
   stores.modules[namespace] = store
+}
+
+function omit (obj, key) {
+  return Object.keys(obj).reduce(function (acc, cur) {
+    if (cur !== key) acc[cur] = obj[cur]
+    return acc
+  }, {})
 }
 
 if (process.env.NODE_ENV === 'development') {
@@ -70,7 +76,7 @@ if (process.env.NODE_ENV === 'development') {
     xhr[method] = (function (func) {
       return function (config, cb) {
         if (config.url[0] === '/') {
-          config.url = `http://localhost:3000${config.url}`
+          config.url = "http://localhost:3000" + config.url
         }
         return func(config, cb)
       }

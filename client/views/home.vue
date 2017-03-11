@@ -20,7 +20,7 @@
 </template>
 
 <script>
-let uid = 0
+var uid = 0
 
 exports.store = {
   state: {
