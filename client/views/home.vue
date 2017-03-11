@@ -16,19 +16,38 @@
         <span>{{todo.title}}</span>
       </li>
     </ul>
+    <button v-on:click='$store.dispatch("home/fetchMessage")'>Fetch Message</button>
+    <h3>{{state.message}}</h3>
   </div>
 </template>
 
 <script>
+const xhr = require('xhr')
 var uid = 0
 
 exports.store = {
   state: {
     filter: 'all',
     newTodo: 'New Todo',
-    todos: []
+    todos: [],
+    message: ''
+  },
+  actions: {
+    fetchMessage: function ({commit}) {
+      xhr.get({
+        url: '/message',
+        json: true
+      }, function (err, res) {
+        if (!err) {
+          commit('getMessage', res)
+        }
+      })
+    } 
   },
   mutations: {
+    getMessage: function (state, res) {
+      state.message = res.body.message
+    },
     editNewTodo: function(state, title) {
       state.newTodo = title
     },
